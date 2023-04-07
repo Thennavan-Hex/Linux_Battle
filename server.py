@@ -1,53 +1,38 @@
-import threading
 import socket
 
-PORT = 5050
-SERVER = "localhost"
-ADDR = (SERVER, PORT)
-FORMAT = "utf-8"
-DISCONNECT_MESSAGE = "!DISCONNECT"
+# create a socket object
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.bind(ADDR)
+# get the hostname and IP address of the machine
+hostname = socket.gethostname()
+ip_address = socket.gethostbyname(hostname)
+print('Server IP address:', ip_address)
 
-clients = set()
-clients_lock = threading.Lock()
+# set the IP address and port to listen on
+ip_port = (ip_address, 9999)
 
+# bind the socket to the IP address and port
+server_socket.bind(ip_port)
 
-def handle_client(conn, addr):
-    print(f"[NEW CONNECTION] {addr} Connected")
+# listen for incoming connections
+server_socket.listen(5)
+print('Waiting for client connections...')
 
-    try:
-        connected = True
-        while connected:
-            msg = conn.recv(1024).decode(FORMAT)
-            if not msg:
-                break
+# accept incoming connections
+client_sockets = []
+while len(client_sockets) < 2:
+    client_socket, address = server_socket.accept()
+    print(f'Connection from {address}')
+    client_sockets.append(client_socket)
 
-            if msg == DISCONNECT_MESSAGE:
-                connected = False
+# chat between the clients
+while True:
+    # receive message from client 1 and send it to client 2
+    message = client_sockets[0].recv(1024)
+    if message:
+        client_sockets[1].send(message)
 
-            print(f"[{addr}] {msg}")
-            with clients_lock:
-                for c in clients:
-                    c.sendall(f"[{addr}] {msg}".encode(FORMAT))
-
-    finally:
-        with clients_lock:
-            clients.remove(conn)
-
-        conn.close()
-
-
-def start():
-    print('[SERVER STARTED]!')
-    server.listen()
-    while True:
-        conn, addr = server.accept()
-        with clients_lock:
-            clients.add(conn)
-        thread = threading.Thread(target=handle_client, args=(conn, addr))
-        thread.start()
-
-
-start()
+    # receive message from client 2 and send it to client 1
+    message = client_sockets[1].recv(1024)
+    if message:
+        client_sockets[0].send(message)
