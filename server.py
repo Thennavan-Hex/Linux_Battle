@@ -27,9 +27,3 @@ while True:
     ThreadCount += 1
     print('Thread Number: ' + str(ThreadCount))
 ServerSideSocket.close()
-
-def data_collect(data):
-    data
-
-
-    data_collect()
