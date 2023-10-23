@@ -1,0 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+* {
+    text-decoration: none;
+    font-family: 'VT323', monospace;
+    color: white;
+    font-size: 36px;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    background-image: url("./assests/wp5709257-hacker-desktop-4k-wallpapers.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+header nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+header nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+header nav li {
+    margin: 0 50px;
+}
+header nav a {
+    text-decoration: none;
+    color: white;
+}
+.website-name {
+    font-weight: bold;
+}
+header nav a:hover {
+    text-decoration: underline;
+}
